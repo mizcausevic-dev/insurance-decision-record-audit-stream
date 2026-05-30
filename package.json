@@ -1,0 +1,16 @@
+{
+  "name": "insurance-decision-record-audit-stream",
+  "version": "0.1.0",
+  "description": "InsurTech audit-stream profile: per-application / claim / pricing AI tool access events hash-chained for NAIC AI Model Bulletin + state DOI examination evidence.",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build:examples": "node src/build-examples.mjs",
+    "verify": "node src/verify.mjs examples/coastguard-claimstriage-2026q4-stream.ndjson",
+    "test": "npm run build:examples && npm run verify"
+  },
+  "dependencies": {
+    "ajv": "^8.17.0",
+    "ajv-formats": "^3.0.1"
+  }
+}

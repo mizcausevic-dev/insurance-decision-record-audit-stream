@@ -1,0 +1,175 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/mizcausevic-dev/insurance-decision-record-audit-stream/blob/main/schema/insurance-decision-event.schema.json",
+  "title": "Insurance Decision Record Audit Event",
+  "description": "Hash-chained append-only ledger event describing which AI tool read which insurance application / claim / policy field, when, under which NAIC AI Model Bulletin (Nov 2023) governance basis, under which buyer-published Decision Card, and under what records-of-disclosure obligation. Covers the three primary insurance-AI decision surfaces — underwriting (issue / decline / rate), claims (approve / deny / amount), pricing / rating (continuous adjustments) — under one schema with kind enum branching. Designed to bridge ACORD (insurance-industry data standards) + state DOI examination semantics to the Kinetic Gain Protocol Suite audit-stream spine.",
+  "type": "object",
+  "required": [
+    "event_id",
+    "timestamp",
+    "kind",
+    "source",
+    "subject_ref",
+    "resource",
+    "action",
+    "outcome",
+    "agent",
+    "regulatory_basis",
+    "decision_card_ref",
+    "prev_hash",
+    "hash"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "event_id":                  {"type": "string", "minLength": 1, "description": "UUID v7 or similar monotonic ID"},
+    "timestamp":                 {"type": "string", "format": "date-time"},
+    "kind": {
+      "type": "string",
+      "enum": [
+        "insurance.underwriting.application-read",
+        "insurance.underwriting.recommendation-produced",
+        "insurance.underwriting.adverse-action-evaluated",
+        "insurance.claim.intake-read",
+        "insurance.claim.triage-produced",
+        "insurance.claim.recommendation-produced",
+        "insurance.claim.adverse-action-evaluated",
+        "insurance.pricing.rate-recalculated",
+        "insurance.policy.renewal-evaluated",
+        "insurance.deletion-requested"
+      ]
+    },
+    "source":                    {"type": "string", "minLength": 1, "description": "The system that emitted the event (e.g. 'coastguard-policyadmin', 'vendori-claimstriage-3.x')"},
+    "subject_ref": {
+      "type": "object",
+      "required": ["scheme", "value"],
+      "additionalProperties": false,
+      "properties": {
+        "scheme": {"type": "string", "enum": ["policy-id-tokenized", "claim-id-tokenized", "application-id-tokenized", "acord-policy-number-tokenized", "internal-tokenized"]},
+        "value":  {"type": "string", "minLength": 1, "description": "Tokenized policy / claim / application identifier — RAW policy number, applicant SSN, claimant SSN, and applicant / claimant name MUST NOT appear"}
+      }
+    },
+    "line_of_business": {
+      "type": "string",
+      "enum": [
+        "personal-auto",
+        "personal-property-homeowners",
+        "personal-property-renters",
+        "personal-umbrella",
+        "personal-life-term",
+        "personal-life-whole",
+        "personal-disability",
+        "personal-health-individual",
+        "personal-flood",
+        "commercial-auto",
+        "commercial-property",
+        "commercial-general-liability",
+        "commercial-workers-comp",
+        "commercial-professional-liability",
+        "commercial-cyber",
+        "commercial-d-o",
+        "specialty-marine",
+        "specialty-aviation",
+        "specialty-crop",
+        "specialty-title"
+      ]
+    },
+    "resource": {
+      "type": "object",
+      "required": ["type"],
+      "additionalProperties": false,
+      "properties": {
+        "type":           {"type": "string", "enum": ["acord-app-form", "acord-loss-run", "acord-claim-form", "telematics-stream", "smart-home-sensor-stream", "medical-record-summary", "credit-based-insurance-score", "wildfire-risk-score", "flood-risk-score", "property-imagery", "claim-photo", "claim-video", "estimator-output", "third-party-data-feed", "adverse-action-notice", "policy-document"]},
+        "acord_xref":     {"type": "string", "description": "ACORD form code or XML element reference (e.g. 'ACORD 80', '//ApplicationInfo/RiskAddress')"},
+        "id_tokenized":   {"type": "string", "minLength": 1, "description": "Tokenized resource ID"},
+        "fields_accessed":{"type": "array", "items": {"type": "string"}, "description": "Logical field names accessed (e.g. ['CreditBasedInsuranceScore', 'PriorClaimsCount24Mo'])"}
+      }
+    },
+    "action": {
+      "type": "string",
+      "enum": ["C", "R", "U", "D", "E"],
+      "description": "Action codes: C = Create, R = Read, U = Update, D = Delete, E = Execute"
+    },
+    "outcome": {
+      "type": "string",
+      "enum": ["0", "4", "8", "12"],
+      "description": "Outcome codes: 0 = success, 4 = minor failure, 8 = serious failure, 12 = major failure"
+    },
+    "agent": {
+      "type": "object",
+      "required": ["ai_tool_card_url", "ai_decision_card_url"],
+      "additionalProperties": false,
+      "properties": {
+        "ai_tool_card_url":     {"type": "string", "format": "uri"},
+        "ai_decision_card_url": {"type": "string", "format": "uri"},
+        "principal":            {"type": "string", "description": "OPTIONAL — actor on whose behalf the AI tool acted (underwriter, claims adjuster, customer service rep)"}
+      }
+    },
+    "regulatory_basis": {
+      "type": "object",
+      "required": ["code"],
+      "additionalProperties": false,
+      "properties": {
+        "code": {
+          "type": "string",
+          "enum": [
+            "naic-ai-model-bulletin-2023",
+            "state-doi-bulletin-adopting-naic",
+            "ny-dfs-circular-letter-7-2024",
+            "co-sb-21-169-anti-discrimination",
+            "ca-doi-regulation-pre-rule",
+            "ecoa-applicable-credit-based-scoring",
+            "fcra-applicable-consumer-report",
+            "consumer-explicit-opt-in-granted",
+            "judicial-order-or-subpoena"
+          ]
+        },
+        "citation":         {"type": "string"},
+        "consent_record_uri":{"type": "string", "format": "uri"}
+      }
+    },
+    "decision_card_ref":       {"type": "string", "format": "uri"},
+    "records_of_disclosure_status": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "logged_in_state_doi_record":   {"type": "boolean", "description": "Whether this access was logged in the insurer's state-DOI examination log"},
+        "logged_in_fcra_dispute_log":   {"type": "boolean", "description": "Whether this access was logged in the insurer's FCRA dispute / reinvestigation log"},
+        "log_entry_uri":                {"type": "string", "format": "uri"}
+      }
+    },
+    "purpose_of_use":          {"type": "string", "description": "Free-text purpose statement (e.g. 'underwriting decisioning', 'claims triage', 'rating engine input')"},
+    "redaction_applied":       {"type": "array", "items": {"type": "string"}, "description": "Which fields were tokenized / hashed / redacted per the Decision Card's vault contract before reaching the AI tool"},
+    "ai_recommendation": {
+      "type": "object",
+      "description": "OPTIONAL — present on *.recommendation-produced + *.triage-produced + pricing.rate-recalculated events. Never autonomous on adverse-action — that always requires a human adjuster / underwriter.",
+      "additionalProperties": false,
+      "properties": {
+        "recommendation":            {"type": "string", "enum": ["approve", "approve-with-conditions", "decline", "refer-to-human", "rate-up", "rate-down", "no-change", "request-more-info"]},
+        "reason_codes":              {"type": "array", "items": {"type": "string"}, "description": "Reason codes per the insurer's reason-code dictionary — NOT the FCRA / ECOA adverse-action statutory codes"},
+        "model_version":             {"type": "string"},
+        "model_confidence":          {"type": "number", "minimum": 0, "maximum": 1},
+        "human_adjudicator_required": {"type": "boolean", "description": "MUST be true on any event whose recommendation could trigger an adverse-action notice (NAIC AI Model Bulletin governance expectation + 2024-2026 state DOI guidance)"}
+      }
+    },
+    "network": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "source_ip_hashed":      {"type": "string"},
+        "tls_version":           {"type": "string"}
+      }
+    },
+    "signature": {
+      "type": "object",
+      "required": ["algorithm", "signer_key_uri", "signature_b64"],
+      "additionalProperties": false,
+      "properties": {
+        "algorithm":     {"type": "string", "const": "ed25519"},
+        "signer_key_uri":{"type": "string", "format": "uri"},
+        "signature_b64": {"type": "string"}
+      }
+    },
+    "prev_hash":               {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "hash":                    {"type": "string", "pattern": "^[0-9a-f]{64}$"}
+  }
+}
