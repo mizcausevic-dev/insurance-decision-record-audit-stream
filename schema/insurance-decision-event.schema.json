@@ -35,7 +35,13 @@
         "insurance.claim.adverse-action-evaluated",
         "insurance.pricing.rate-recalculated",
         "insurance.policy.renewal-evaluated",
-        "insurance.deletion-requested"
+        "insurance.deletion-requested",
+        "insurance.decision-card.issued",
+        "insurance.decision-card.reviewed",
+        "insurance.decision-card.appealed",
+        "insurance.decision-card.overridden",
+        "insurance.decision-card.reissued",
+        "insurance.decision-card.expired"
       ]
     },
     "source":                    {"type": "string", "minLength": 1, "description": "The system that emitted the event (e.g. 'coastguard-policyadmin', 'vendori-claimstriage-3.x')"},
@@ -151,6 +157,27 @@
         "human_adjudicator_required": {"type": "boolean", "description": "MUST be true on any event whose recommendation could trigger an adverse-action notice (NAIC AI Model Bulletin governance expectation + 2024-2026 state DOI guidance)"}
       }
     },
+    "decision_card_lifecycle": {
+      "type": "object",
+      "description": "PROPOSED (see SPEC.md). OPTIONAL — required on insurance.decision-card.* kinds only. Tracks the post-issuance lifecycle of a previously-issued AI Claims Decision Card (reviewed / appealed / overridden / reissued / expired), bridging this event-access-log schema to the ai-claims-decision-card-spec card that governed the original decision.",
+      "required": ["source_decision_card_ref"],
+      "additionalProperties": false,
+      "properties": {
+        "source_decision_card_ref": {
+          "type": "object",
+          "required": ["spec", "card_id", "card_hash"],
+          "additionalProperties": false,
+          "properties": {
+            "spec":                {"type": "string", "const": "ai-claims-decision-card-spec", "description": "Detection key naming the sibling spec this event bridges to — same convention as claims_card_version / audit_stream_version elsewhere in the Suite"},
+            "claims_card_version": {"type": "string", "description": "Version of ai-claims-decision-card-spec the referenced card was issued under"},
+            "card_id":             {"type": "string", "minLength": 1},
+            "card_hash":           {"type": "string", "pattern": "^sha256:[0-9a-f]{64}$", "description": "SHA-256 of the referenced Decision Card, e.g. sha256:<hex>"}
+          }
+        },
+        "jurisdiction":     {"type": "string", "pattern": "^[A-Z]{2}$", "description": "US state code the lifecycle event is examined under (feeds state-insurance-ai-disclosure-tracker)"},
+        "naic_bulletin_ref":{"type": ["string", "null"], "format": "uri", "description": "OPTIONAL pointer into naic-ai-bulletin-readiness-evidence-bundle, when applicable"}
+      }
+    },
     "network": {
       "type": "object",
       "additionalProperties": false,
@@ -171,5 +198,23 @@
     },
     "prev_hash":               {"type": "string", "pattern": "^[0-9a-f]{64}$"},
     "hash":                    {"type": "string", "pattern": "^[0-9a-f]{64}$"}
+  },
+  "if": {
+    "properties": {
+      "kind": {
+        "enum": [
+          "insurance.decision-card.issued",
+          "insurance.decision-card.reviewed",
+          "insurance.decision-card.appealed",
+          "insurance.decision-card.overridden",
+          "insurance.decision-card.reissued",
+          "insurance.decision-card.expired"
+        ]
+      }
+    },
+    "required": ["kind"]
+  },
+  "then": {
+    "required": ["decision_card_lifecycle"]
   }
 }

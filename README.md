@@ -4,7 +4,7 @@
 
 Part of the [Kinetic Gain Protocol Suite](https://suite.kineticgain.com). Opens the **InsurTech** vertical alongside the existing HealthTech, EdTech, and PropTech 6-packs.
 
-> Status: v0.1 draft. Schema at [`schema/insurance-decision-event.schema.json`](./schema/insurance-decision-event.schema.json), Node verifier at [`src/verify.mjs`](./src/verify.mjs), canonical example at [`examples/coastguard-claimstriage-2026q4/`](./examples/coastguard-claimstriage-2026q4/).
+> Status: v0.1 draft. Schema at [`schema/insurance-decision-event.schema.json`](./schema/insurance-decision-event.schema.json), Node verifier at [`src/verify.mjs`](./src/verify.mjs), canonical example at [`examples/coastguard-claimstriage-2026q4/`](./examples/coastguard-claimstriage-2026q4/). Full record structure + invariants also consolidated in [`SPEC.md`](./SPEC.md), including a proposed additive decision-card-lifecycle branch pending review.
 
 ## Why this exists
 
@@ -72,6 +72,7 @@ CI runs both on every push + PR.
 | [`fhir-resource-access-audit`](https://github.com/mizcausevic-dev/fhir-resource-access-audit) | Sibling HealthTech audit-stream profile (FHIR / HIPAA) |
 | [`student-data-access-audit-stream`](https://github.com/mizcausevic-dev/student-data-access-audit-stream) | Sibling EdTech audit-stream profile (CEDS / Ed-Fi / FERPA) |
 | [`mortgage-decision-record-audit-stream`](https://github.com/mizcausevic-dev/mortgage-decision-record-audit-stream) | Sibling PropTech audit-stream profile (MISMO / URLA / ECOA / RESPA / HMDA) |
+| `ai-claims-decision-card-spec` | Referenced by the proposed `decision_card_lifecycle` branch (see `SPEC.md` §5) — pending review |
 
 ## Compliance posture
 
