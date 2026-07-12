@@ -2,6 +2,35 @@
 
 All notable changes to the Insurance Decision Record Audit Stream.
 
+## [Unreleased] — proposed, pending review
+
+### Proposed (additive, not yet merged to a release)
+
+- `SPEC.md` — new file; record structure, invariants, and estate-position
+  reference consolidated from README plus a documented reconciliation note
+  (see below).
+- 6 new `kind` values: `insurance.decision-card.{issued,reviewed,appealed,overridden,reissued,expired}`
+  — appended to the existing 10-value enum, no existing values changed.
+- New optional `decision_card_lifecycle` object, required only on the 6 new
+  kinds (root-level `if`/`then`), bridging this access-event schema to a
+  sibling `ai-claims-decision-card-spec` Decision Card via `source_decision_card_ref`.
+- New example `examples/decision-card-lifecycle-fictional/` — explicitly
+  fictional 3-event lifecycle stream (issued → appealed → overridden),
+  validated end-to-end with the existing `build:examples` + `verify` pipeline.
+- **Reconciliation note:** this branch resolves a naming/role collision found
+  between this repo and an unreconciled draft package that assumed the same
+  repo name for a different concept ("2nd of 6, inventory #244", card-lifecycle
+  tracking). The confirmed InsurTech 6-pack roster (per this CHANGELOG + the
+  reference repo's "Composes with" table) has no card-lifecycle tracker among
+  its 5 remaining items — see `SPEC.md` §2 and §5.4 for the full reconciliation
+  and open questions left for reviewer decision before merge.
+- Verified before opening this PR: schema still parses + compiles under
+  Ajv2020; the existing coastguard example still validates unchanged (proves
+  non-destructive); a positive fixture using the new kinds validates; a
+  negative fixture (lifecycle `kind` without `decision_card_lifecycle`)
+  correctly fails validation (proves the new requirement is enforced, not
+  just permitted).
+
 ## [0.1] — 2026-05-29
 
 ### Added

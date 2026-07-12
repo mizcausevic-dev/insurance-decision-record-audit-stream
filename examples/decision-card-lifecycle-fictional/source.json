@@ -1,0 +1,110 @@
+[
+  {
+    "event_id": "0190b220-0001-7000-8000-000000000001",
+    "timestamp": "2026-11-10T09:00:00Z",
+    "kind": "insurance.decision-card.issued",
+    "source": "coastguard-claimsadmin",
+    "subject_ref": {
+      "scheme": "claim-id-tokenized",
+      "value": "tok:claim:fictional0001"
+    },
+    "line_of_business": "personal-property-homeowners",
+    "resource": {
+      "type": "adverse-action-notice",
+      "id_tokenized": "tok:decision-card:fictional-claims-card-001"
+    },
+    "action": "C",
+    "outcome": "0",
+    "agent": {
+      "ai_tool_card_url": "https://example.kineticgain.com/ai-tool-cards/vendori-claimstriage-3.x",
+      "ai_decision_card_url": "https://example.kineticgain.com/decision-cards/fictional-claims-card-001",
+      "principal": "senior-claims-adjuster"
+    },
+    "regulatory_basis": {
+      "code": "naic-ai-model-bulletin-2023"
+    },
+    "decision_card_ref": "https://example.kineticgain.com/decision-cards/fictional-claims-card-001",
+    "purpose_of_use": "FICTIONAL EXAMPLE — decision-card lifecycle proposal, not a real claim or card",
+    "decision_card_lifecycle": {
+      "source_decision_card_ref": {
+        "spec": "ai-claims-decision-card-spec",
+        "claims_card_version": "1.2.0",
+        "card_id": "fictional-claims-card-001",
+        "card_hash": "sha256:5d192d6623680382b410619d833f22c4fbc7448feb83ebd533ad658d8c1524ec"
+      },
+      "jurisdiction": "FL"
+    }
+  },
+  {
+    "event_id": "0190b220-0002-7000-8000-000000000002",
+    "timestamp": "2026-11-18T14:30:00Z",
+    "kind": "insurance.decision-card.appealed",
+    "source": "coastguard-claimsadmin",
+    "subject_ref": {
+      "scheme": "claim-id-tokenized",
+      "value": "tok:claim:fictional0001"
+    },
+    "line_of_business": "personal-property-homeowners",
+    "resource": {
+      "type": "adverse-action-notice",
+      "id_tokenized": "tok:decision-card:fictional-claims-card-001"
+    },
+    "action": "U",
+    "outcome": "0",
+    "agent": {
+      "ai_tool_card_url": "https://example.kineticgain.com/ai-tool-cards/vendori-claimstriage-3.x",
+      "ai_decision_card_url": "https://example.kineticgain.com/decision-cards/fictional-claims-card-001",
+      "principal": "policyholder-appeal-submission"
+    },
+    "regulatory_basis": {
+      "code": "naic-ai-model-bulletin-2023"
+    },
+    "decision_card_ref": "https://example.kineticgain.com/decision-cards/fictional-claims-card-001",
+    "purpose_of_use": "FICTIONAL EXAMPLE — decision-card lifecycle proposal, not a real claim or card",
+    "decision_card_lifecycle": {
+      "source_decision_card_ref": {
+        "spec": "ai-claims-decision-card-spec",
+        "claims_card_version": "1.2.0",
+        "card_id": "fictional-claims-card-001",
+        "card_hash": "sha256:5d192d6623680382b410619d833f22c4fbc7448feb83ebd533ad658d8c1524ec"
+      },
+      "jurisdiction": "FL"
+    }
+  },
+  {
+    "event_id": "0190b220-0003-7000-8000-000000000003",
+    "timestamp": "2026-11-25T11:15:00Z",
+    "kind": "insurance.decision-card.overridden",
+    "source": "coastguard-claimsadmin",
+    "subject_ref": {
+      "scheme": "claim-id-tokenized",
+      "value": "tok:claim:fictional0001"
+    },
+    "line_of_business": "personal-property-homeowners",
+    "resource": {
+      "type": "adverse-action-notice",
+      "id_tokenized": "tok:decision-card:fictional-claims-card-001"
+    },
+    "action": "U",
+    "outcome": "0",
+    "agent": {
+      "ai_tool_card_url": "https://example.kineticgain.com/ai-tool-cards/vendori-claimstriage-3.x",
+      "ai_decision_card_url": "https://example.kineticgain.com/decision-cards/fictional-claims-card-001",
+      "principal": "senior-claims-adjuster-override"
+    },
+    "regulatory_basis": {
+      "code": "naic-ai-model-bulletin-2023"
+    },
+    "decision_card_ref": "https://example.kineticgain.com/decision-cards/fictional-claims-card-001",
+    "purpose_of_use": "FICTIONAL EXAMPLE — decision-card lifecycle proposal, not a real claim or card",
+    "decision_card_lifecycle": {
+      "source_decision_card_ref": {
+        "spec": "ai-claims-decision-card-spec",
+        "claims_card_version": "1.2.0",
+        "card_id": "fictional-claims-card-001",
+        "card_hash": "sha256:5d192d6623680382b410619d833f22c4fbc7448feb83ebd533ad658d8c1524ec"
+      },
+      "jurisdiction": "FL"
+    }
+  }
+]
